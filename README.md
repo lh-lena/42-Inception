@@ -52,6 +52,19 @@ ohladkov ALL=(ALL) ALL
 Save and exit the editor.
 Be careful when editing the sudoers file, as a syntax error can cause issues with sudo access. -->
 
+## shared folder
+
+1. Ensure the vboxsf module is loaded:
+    sudo modprobe vboxsf
+2. Add an entry to /etc/fstab:
+    shared_folder_name  /path/to/mount/point  vboxsf  defaults  0  0
+3. After any changes in /etc/fstab run:
+    systemctl daemon-reload
+After adding the entry to /etc/fstab, mount the shared folder without rebooting:
+    sudo mount -a
+
+
+
 ## Install Docker
 
 ```bash
