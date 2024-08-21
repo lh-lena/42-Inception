@@ -1,13 +1,57 @@
-FROM debian:latest
+FROM debian:buster
 
 # install nginx
-RUN apt-get update && apt-get upgrade -y  && apt-get install -y nginx
+RUN	apt-get update && \
+	apt-get upgrade -y  && \
+	apt-get install -y nginx
 
-#COPY: conf/nginx.conf /etc/nginx/conf.d
+# accessing the container terminal
+RUN	apt-get update && \
+	apt-get install vim -y
 
-COPY /mnt/inception/src/index.html /usr/share/nginx/html/index.html
+RUN	apt-get update && \
+	apt-get install curl -y
 
-EXPOSE 80
+# a new folder will the certificate and the key  for a secure connection
+RUN	mkdir -p /etc/nginx/ssl
+
+# download tool for SSL certificate management/creation
+RUN	apt-get update && \
+	apt-get install openssl -y
+
+# generate a SSL certificate.
+# req - primarily creates and processes certificate requests in PKCS#10 format.
+# -x509 - the keyword to dpecify the type of certificate.
+# -nodes - the option will leave our private key empty
+# -out - the option to store created certificate.
+# -keyout - the option to store created key.
+# -subj - the option allows us to pre-fill information to the certificate
+# "/C=xx/ST=StateName/L=CityName/O=CompanyName/OU=CompanySectionName/CN=HostName"
+RUN	openssl req -x509 -nodes -out /etc/nginx/ssl/inception.crt \
+	-keyout /etc/nginx/ssl/inception.key \
+	-subj "/C=DE/ST=IDF/L=Berlin/O=42/OU=42Berlin/CN=ohladkov.42.fr" #/UID=ohladkov
+
+# RUN	openssl req -x509 -newkey rsa:4096 -nodes \
+#		-keyout /etc/nginx/ssl/inception.key \
+#		-out /etc/nginx/ssl/inception.crt \
+#		-subj "/C=DE/ST=IDF/L=Berlin/O=42/OU=42Berlin/CN=ohladkov.42.fr" #/UID=ohladkov
+
+
+# create a folder to store the NGINX config files
+RUN	mkdir -p /var/run/nginx
+
+#??? do we have to delete config file first
+RUN	rm -f /etc/nginx/nginx.conf 
+
+COPY	conf/nginx.conf /etc/nginx/nginx.conf
+
+#COPY /mnt/inception/srcs/requirements/nginx/tool /usr/share/nginx/html/
+
+# gives rights
+RUN	chmod -R 755 /var/www/html
+RUN	chown -R www-data:www-data /var/www/html
+
+EXPOSE 443
 
 #  keeps NGINX running in the foreground
 CMD ["nginx", "-g", "daemon off;"] 
