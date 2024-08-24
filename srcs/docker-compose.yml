@@ -11,9 +11,9 @@ services:
       - docker-network
     # env_file:
     # - .env
-    #volumes:
-    #  - /home/ohladkov/data/html:/var/www/html
-    #  - /home/ohladkov/data/nginx.conf:/etc/nginx/nginx.conf
+    volumes:
+      - /home/ohladkov/data/html:/var/www/html
+        # - /home/ohladkov/data/nginx.conf:/etc/nginx/nginx.conf
 
 networks:
     # network name
@@ -23,6 +23,6 @@ networks:
         driver: default
           #        config:
           #- subnet: "192.168.92.0/24"
-          #volumes:
-          #  data-html:
-          #  data-nginx-conf:
+volumes:
+  data-html:
+    #  data-nginx-conf:
