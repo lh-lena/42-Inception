@@ -17,7 +17,7 @@ services:
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: wordpress
     networks:
-      - docker-network
+      - inception
 
   # Database
   db:
@@ -33,10 +33,10 @@ services:
       - /home/ohladkov/data/mysql:/var/lib/mysql
     restart: always
     networks:
-      - docker-network
+      - inception
 
 networks:
-  docker-network:
+  inception:
     #ipam:
      driver: default
     # config:
