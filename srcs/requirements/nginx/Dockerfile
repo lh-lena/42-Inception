@@ -14,10 +14,6 @@ RUN	apt-get update && \
 # a new folder will the certificate and the key  for a secure connection
 RUN	mkdir -p /etc/nginx/ssl
 
-# download tool for SSL certificate management/creation
-#RUN	apt-get update && \
-#	apt-get install openssl -y
-
 # generate a SSL certificate.
 # req - primarily creates and processes certificate requests in PKCS#10 format.
 # -x509 - the keyword to dpecify the type of certificate.
@@ -29,7 +25,7 @@ RUN	mkdir -p /etc/nginx/ssl
 RUN	openssl req -x509 -newkey rsa:4096 -nodes \
 	-keyout /etc/nginx/ssl/inception.key \
 	-out /etc/nginx/ssl/inception.crt \
-	-subj "/C=DE/ST=IDF/L=Berlin/O=42/OU=42Berlin/CN=ohladkov.42.fr" #/UID=ohladkov
+	-subj "/C=DE/ST=IDF/L=Berlin/O=42/OU=42Berlin/CN=ohladkov.42.fr/UID=ohladkov"
 
 # create a folder to store the NGINX config files
 RUN	mkdir -p /var/run/nginx
@@ -39,7 +35,7 @@ RUN	rm -f /etc/nginx/nginx.conf
 
 COPY	./conf/nginx.conf /etc/nginx/nginx.conf
 
-COPY ./tools/ /usr/share/nginx/html/
+#COPY ./tools/ /usr/share/nginx/html/
 
 # gives rights
 RUN	chmod 755 /var/www/html

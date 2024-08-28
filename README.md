@@ -33,26 +33,24 @@ To verify the addition. Should return `root`
     sudo whoami
 ```
 
-<!-- 
-Directly Editing the sudoers File (Advanced)
-If you need to edit the sudoers file directly:
 
-Use the visudo command:
+## Directly Editing the sudoers File
 
-This command safely edits the sudoers file:
-bash
-Copy code
-visudo
-Add the user:
+1. log in as root:
+```bash
+    su -
+```
+2. This command safely edits the sudoers file:
+```bash
+    visudo
+```
+3. Add a line like this to give <login> sudo privileges:
+```
+	<login> ALL=(ALL) ALL
+```
 
-Add a line like this to give ohladkov sudo privileges:
-bash
-Copy code
-ohladkov ALL=(ALL) ALL
-Save and exit the editor.
-Be careful when editing the sudoers file, as a syntax error can cause issues with sudo access. -->
 
-## shared folder
+## Shared folder
 
 1. Ensure the vboxsf module is loaded:
     sudo modprobe vboxsf
@@ -60,7 +58,7 @@ Be careful when editing the sudoers file, as a syntax error can cause issues wit
     shared_folder_name  /path/to/mount/point  vboxsf  defaults  0  0
 3. After any changes in /etc/fstab run:
     systemctl daemon-reload
-After adding the entry to /etc/fstab, mount the shared folder without rebooting:
+4. After adding the entry to /etc/fstab, mount the shared folder without rebooting:
     sudo mount -a
 
 
@@ -80,7 +78,7 @@ Install Docker Compose ->
 ```
 
 Docker Compose Contribute documentation
-```url
+```href
     https://github.com/docker/compose/blob/main/CONTRIBUTING.md
 ```
 
@@ -89,6 +87,10 @@ Dockerfile
     https://docs.docker.com/build/building/packaging/
 ```
 
+
+
 Create a password to our DB
 $ openssl rand -base64 32 > db_password.txt
 $ openssl rand -base64 32 > db_root_password.txt
+
+
