@@ -2,23 +2,31 @@ FROM debian:buster
 
 # PHP FPM
 RUN apt-get update && \
-    apt-get install -y \
-    apt-get install gnupg2
+    apt-get install php-fpm php-mysql -y
 
-RUN wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
-RUN echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
-RUN apt-get update
-RUN apt-get install php7.4-fpm 
-#php7.4-common php7.4-mysql \
-#    php7.4-xml php7.4-xmlrpc php7.4-curl php7.4-gd \
-#    php7.4-imagick php7.4-cli php7.4-dev  \
-#    php7.4-mbstring php7.4-opcache  \
-#    php7.4-soap php7.4-zip -y
-#
-#Note: You may not need all of these php packages, but these are the most commonly used Feel free to skip the ones you know you don't need
+RUN apt-get install curl -y
+
+# RUN wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
+# RUN echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
+
+COPY ./tools/run.sh /tmp/
+COPY ./conf/wp-config.php /var/www/html/
+# COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
+
+# RUN	chmod +x /tmp/wp-config.php
+
+RUN	chmod +x /var/www/html/wp-config.php
+
+RUN	chmod +x /tmp/run.sh
+
+CMD ["sh", "/tmp/run.sh"]
 
 #Make sure php7.4-fpm is running
 # sudo systemctl status php7.4-fpm
 
 # https://github.com/MansoorMajeed/devops-from-scratch/blob/master/episodes/28-setting-up-wordpress-nginx-php-fpm.md
 
+#The www.conf file is typically found in /etc/php/7.3/fpm/pool.d/ within the container.
+
+# Starting the Service
+# /usr/sbin/php-fpm7.3 -F

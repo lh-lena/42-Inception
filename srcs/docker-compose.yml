@@ -1,24 +1,26 @@
 services:
   
   # Database mariadb
-  db:
+  mariadb:
     build: 
       context: requirements/mariadb
       dockerfile: Dockerfile
-    # image: mariadb
     container_name: mariadb
     restart: unless-stopped
     volumes:
-      - /home/ohladkov/data/mariadb:/var/lib/mysql
+      - ./data/mariadb:/var/lib/mysql
+      - ./init-scripts:/docker-entrypoint-initdb.d  # Mount initialization scripts
     env_file:
       - .env
     environment:
       MARIADB_ROOT_PASSWORD_FILE: db_root_password
-      MARIADB_DATABASE: '${MYSQL_DATABASE}'
+      MARIADB_DATABASE: '${DATABASE_NAME}'
       MARIADB_USER: '${MYSQL_USER}'
       MARIADB_PASSWORD_FILE: db_password
     tty: true #docker start -i mariadb
     stdin_open: true
+    ports:
+      - "3306:3306"
     secrets:
       - db_root_password
       - db_password
@@ -29,19 +31,22 @@ services:
   wordpress:
     # to create mysql first
     depends_on:
-      - db
-    image: wordpress:php8.0-fpm-alpine #wordpress:latest
+      - mariadb
+    # image: wordpress:php8.0-fpm-alpine #wordpress:latest
+    build: 
+      context: requirements/wordpress
+      dockerfile: Dockerfile
     container_name: wordpress
     restart: unless-stopped
     volumes:
-      - /home/ohladkov/data/wordpress:/var/www/html
+      - ./data/wp:/var/www/html
     expose:
       - "9000"
     env_file:
       - .env
     environment:
-      WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_NAME: '${MYSQL_DATABASE}'
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_NAME: '${DATABASE_NAME}'
       WORDPRESS_DB_USER:  '${MYSQL_USER}'
       WORDPRESS_DB_PASSWORD_FILE: db_password
     secrets:
@@ -63,7 +68,7 @@ services:
     env_file:
       - .env
     volumes:
-      - /home/ohladkov/data/wordpress:/var/www/html
+      - ./data/wp-content:/var/www/html/content
     networks:
       - inception
   
