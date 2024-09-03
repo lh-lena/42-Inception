@@ -1,27 +1,32 @@
 FROM debian:buster
 
 RUN apt-get update && \
-    apt-get install -y \
-    mariadb-server
+    apt-get install -y mariadb-server
 
-    # mariadb-client && \
-    # apt-get clean &&\
-    # rm -rf /var/lib/apt/lists/*
 # Expose the default MariaDB port
 EXPOSE 3306
 
-RUN mkdir -p /var
+# Update the bind-address in the MariaDB configuration file
+RUN sed -i "s/^bind-address\s*=.*$/bind-address = 0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf
 
-ENV MARIADB_ROOT_PASSWORD="4tzj2PrdUM9mIenIbU7nKz4XFIs8d2rwMocPBd44xOs="
-ENV MARIADB_DATABASE="mariadb"
-ENV MARIADB_USER="wordpress"
-ENV MARIADB_PASSWORD="cN9Wz6RgF812GUt2GmdcgFIaq3VhxyfAUXcWB9jfnDQ="
+# # Alternatively, add the line if it doesn't exist
+# RUN echo "bind-address = 0.0.0.0" >> /etc/mysql/mariadb.conf.d/50-server.cnf
 
-# RUN mysql_secure_installation  --password="4tzj2PrdUM9mIenIbU7nKz4XFIs8d2rwMocPBd44xOs="
+
+# ENV MARIADB_ROOT_PASSWORD="4tzj2PrdUM9mIenIbU7nKz4XFIs8d2rwMocPBd44xOs="
+# ENV MARIADB_DATABASE="mariadb"
+# ENV MARIADB_USER="wordpress"
+# ENV MARIADB_PASSWORD="cN9Wz6RgF812GUt2GmdcgFIaq3VhxyfAUXcWB9jfnDQ="
+
 # current password for root to connect local MySQL through socket '/var/run/mysqld/mysqld.sock' -> mysql
 
+COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
 
+COPY ./tools/run.sh /tmp
 
-COPY run.sh /tmp
+# RUN chown -R mysql:mysql /tmp/
+RUN	chmod +x /tmp/run.sh
 
-CMD ["sh"]
+# USER	mysql
+
+CMD ["sh", "/tmp/run.sh"]

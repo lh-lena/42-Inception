@@ -89,8 +89,13 @@ Dockerfile
 
 
 
-Create a password to our DB
+Create a password to the DB
 $ openssl rand -base64 32 > db_password.txt
 $ openssl rand -base64 32 > db_root_password.txt
+
+PASSWORD=$(tp -dc a-zA-Z0-9 < /dev/urandom | head -c 12)
+mysql -u root -p <<EOF
+creat database $HOSTNAME;
+
 
 

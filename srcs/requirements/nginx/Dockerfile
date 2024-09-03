@@ -1,8 +1,7 @@
 FROM debian:buster
 
 # install nginx
-RUN	apt-get update && \
-	apt-get upgrade -y  && \
+RUN	apt-get update -y  && \
 	apt-get install nginx -y && \
 	apt-get install openssl -y 
 
@@ -25,7 +24,7 @@ RUN	mkdir -p /etc/nginx/ssl
 RUN	openssl req -x509 -newkey rsa:4096 -nodes \
 	-keyout /etc/nginx/ssl/inception.key \
 	-out /etc/nginx/ssl/inception.crt \
-	-subj "/C=DE/ST=IDF/L=Berlin/O=42/OU=42Berlin/CN=ohladkov.42.fr/UID=ohladkov"
+	-subj "/C=DE/ST=IDF/L=Berlin/O=42/OU=42Berlin/CN=ohladkov.42Berlin.de/UID=ohladkov"
 
 # create a folder to store the NGINX config files
 RUN	mkdir -p /var/run/nginx
