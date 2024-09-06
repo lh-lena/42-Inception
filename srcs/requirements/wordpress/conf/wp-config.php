@@ -26,7 +26,9 @@ define( 'DB_NAME', getenv('DATABASE_NAME') );
 define( 'DB_USER', getenv('WP_USER') );
 
 /** MySQL database password */
-define( 'DB_PASSWORD', trim(file_get_contents('/run/secrets/wp_db_password')) );
+// define( 'DB_PASSWORD', trim(file_get_contents('/run/secrets/db_password')) );
+define( 'DB_PASSWORD', 'cN9Wz6RgF812GUt2GmdcgFIaq3VhxyfAUXcWB9jfnDQ' );
+
 
 /** MySQL hostname */
 define( 'DB_HOST', getenv('DB_HOST') );
@@ -38,6 +40,12 @@ define( 'DB_CHARSET', 'utf8' );
 define( 'DB_COLLATE', '' );
 
 define( 'WP_ALLOW_REPAIR', true );
+
+/** ## Save files direct method ## */
+define( 'FS_METHOD', 'direct' );
+
+/** ## Increase memory limit, 256MB is recommended ## */
+define('WP_MEMORY_LIMIT', '256M');
 
 /**#@+
  * Authentication Unique Keys and Salts.
@@ -55,19 +63,21 @@ define( 'WP_ALLOW_REPAIR', true );
 // if ($response !== false) {
 //     echo $response;
 // }
-{@link "https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org" secret-key service}
+// {@link "https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org" secret-key service}
 
-// define( 'AUTH_KEY',         '):Uw9 :|7$m3yy=c^IM%d8}zG6yXY%25SDUyr.r#GcDP)[b25Yn$sDLNwR~I=kwq' );
-// define( 'SECURE_AUTH_KEY',  'lBWxAzhu=StQ(s-[t_D8yH8_`0NiM~d[m q<{Hri]n#UM3J;@x[ne;,k<~cN`~%,' );
-// define( 'LOGGED_IN_KEY',    ' /e+%ecWs`>hA<s`|+7rmujt>3MA}GD*n=D7W%$8h*Xc!jP?hn+fw0#;;g{Ywl@k' );
-// define( 'NONCE_KEY',        ' -cX{xQc|GjD$=kXd,|lUX5)*oT)ru3^px-iU{q;`1If22EqIwA0/lPIIbpbtB=C' );
-// define( 'AUTH_SALT',        'U9LX s1@q6$[*VV,MUhL7tS@;I9t_u*uDQIfZdG.ei1Amy$*.RI_TSTz#y=X.>Wq' );
-// define( 'SECURE_AUTH_SALT', '0<MR&l4v=cZ)8Ke/#ip>2<Ed@ j<#pvLaOMc-jEFM9^tr`X*T2qDIB@)gg.0<e2V' );
-// define( 'LOGGED_IN_SALT',   'xSHh4B]r[~)h%n$f(dCt;mD}#q gy$<{ >qGgPS>XH*]jH>W<!10>H<_16l{(OdP' );
-// define( 'NONCE_SALT',       '7Ea$kvU|lkO8&X]b7^#K+w! lH2)SOelLiaYYX(Zz)Ebk_]-#m,J&aM<*JedFa| ' );
+define( 'AUTH_KEY',         '):Uw9 :|7$m3yy=c^IM%d8}zG6yXY%25SDUyr.r#GcDP)[b25Yn$sDLNwR~I=kwq' );
+define( 'SECURE_AUTH_KEY',  'lBWxAzhu=StQ(s-[t_D8yH8_`0NiM~d[m q<{Hri]n#UM3J;@x[ne;,k<~cN`~%,' );
+define( 'LOGGED_IN_KEY',    ' /e+%ecWs`>hA<s`|+7rmujt>3MA}GD*n=D7W%$8h*Xc!jP?hn+fw0#;;g{Ywl@k' );
+define( 'NONCE_KEY',        ' -cX{xQc|GjD$=kXd,|lUX5)*oT)ru3^px-iU{q;`1If22EqIwA0/lPIIbpbtB=C' );
+define( 'AUTH_SALT',        'U9LX s1@q6$[*VV,MUhL7tS@;I9t_u*uDQIfZdG.ei1Amy$*.RI_TSTz#y=X.>Wq' );
+define( 'SECURE_AUTH_SALT', '0<MR&l4v=cZ)8Ke/#ip>2<Ed@ j<#pvLaOMc-jEFM9^tr`X*T2qDIB@)gg.0<e2V' );
+define( 'LOGGED_IN_SALT',   'xSHh4B]r[~)h%n$f(dCt;mD}#q gy$<{ >qGgPS>XH*]jH>W<!10>H<_16l{(OdP' );
+define( 'NONCE_SALT',       '7Ea$kvU|lkO8&X]b7^#K+w! lH2)SOelLiaYYX(Zz)Ebk_]-#m,J&aM<*JedFa| ' );
+
+
 
 // define( 'WP_REDIS_HOST', 'redis' );
-// define( 'WP_REDIS_PORT', 6379 );     
+// define( 'WP_REDIS_PORT', 6379 );
 
 
 // define('WP_CACHE', true);

@@ -24,7 +24,7 @@ services:
     image: mysql:8.0
       #command: '--default-autentication-plugin=mysql_native_password'
     environment:
-      MYSQL_DATABASE: wordpress
+      DATABASE_NAME: wordpress
       MYSQL_USER: wordpress
       MYSQL_PASSWORD: wordpress
       MYSQL_ROOT_PASSWORD: pass

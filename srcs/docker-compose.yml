@@ -2,14 +2,17 @@ services:
   
   # Database mariadb
   mariadb:
-    build: 
+    build:
       context: requirements/mariadb
       dockerfile: Dockerfile
+    image: mariadb
     container_name: mariadb
     restart: unless-stopped
     volumes:
-      - ./data/mariadb:/var/lib/mysql
-      - ./init-scripts:/docker-entrypoint-initdb.d  # Mount initialization scripts
+      - /home/ohladkov/data/mariadb:/var/lib/mysql
+      # bind-mount any sql files that should be run while initializing
+      # - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      # - ./init-scripts:/docker-entrypoint-initdb.d  # Mount initialization scripts
     env_file:
       - .env
     environment:
@@ -17,10 +20,8 @@ services:
       MARIADB_DATABASE: '${DATABASE_NAME}'
       MARIADB_USER: '${MYSQL_USER}'
       MARIADB_PASSWORD_FILE: db_password
-    tty: true #docker start -i mariadb
-    stdin_open: true
-    ports:
-      - "3306:3306"
+    # tty: true #docker start -i mariadb
+    # stdin_open: true
     secrets:
       - db_root_password
       - db_password
@@ -32,14 +33,14 @@ services:
     # to create mysql first
     depends_on:
       - mariadb
-    # image: wordpress:php8.0-fpm-alpine #wordpress:latest
     build: 
       context: requirements/wordpress
       dockerfile: Dockerfile
+    image: wordpress
     container_name: wordpress
     restart: unless-stopped
     volumes:
-      - ./data/wp:/var/www/html
+      - /home/ohladkov/data/wordpress:/var/www/html
     expose:
       - "9000"
     env_file:
@@ -49,7 +50,9 @@ services:
       WORDPRESS_DB_NAME: '${DATABASE_NAME}'
       WORDPRESS_DB_USER:  '${MYSQL_USER}'
       WORDPRESS_DB_PASSWORD_FILE: db_password
+      
     secrets:
+       - db_root_password
        - db_password
     networks:
       - inception
@@ -61,14 +64,15 @@ services:
     build: 
       context: requirements/nginx/
       dockerfile: Dockerfile
+    image: nginx
     container_name: nginx
-    restart: on-failure
+    restart: always
     ports:
       - "443:443"
     env_file:
       - .env
     volumes:
-      - ./data/wp-content:/var/www/html/content
+      - /home/ohladkov/data/wordpress:/var/www/html
     networks:
       - inception
   
@@ -81,6 +85,18 @@ services:
     # To use the CLI to access mariadb dir:
   # dokcer exec -it mariadb mysql --user=root --password=(password)
   # 
+
+  # redis:
+  #   image: redis
+  #   container_name: redis
+  #   ports:
+  #     - '6379:6379'
+  #   restart: always
+  #   expose:
+  #     - '6379'
+      # in wp-config.php file.
+# define('WP_REDIS_HOST', 'redis');
+# define('WP_REDIS_PORT', '6379');
 
 networks:
     # network name
