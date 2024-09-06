@@ -1,32 +1,55 @@
 FROM debian:buster
 
 # PHP FPM
-RUN apt-get update && \
-    apt-get install php-fpm php-mysql -y
+RUN	apt-get update && \
+	apt-get install -y php7.3 \
+	php-fpm \
+	php-mysqli \
+	curl \
+	wget
 
-RUN apt-get install curl -y
+# wordpress
+RUN		set -eux; \
+	version='6.6.1'; \
+	curl -o wordpress.tar.gz -fL "https://wordpress.org/wordpress-$version.tar.gz"; \
+	tar -xzf wordpress.tar.gz -C /usr/src/; \
+	rm wordpress.tar.gz; \
+	chown -R www-data:www-data /usr/src/wordpress
 
-# RUN wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
-# RUN echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
+RUN mkdir -p /run/php
 
-COPY ./tools/run.sh /tmp/
-COPY ./conf/wp-config.php /var/www/html/
-# COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
+RUN sed -i 's|listen = /run/php/php7.3-fpm.sock|listen = 9000|' /etc/php/7.3/fpm/pool.d/www.conf
 
-# RUN	chmod +x /tmp/wp-config.php
+# RUN	wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+# RUN chmod +x wp-cli.phar
+# RUN mv wp-cli.phar /usr/local/bin/wp
+# RUN sleep 10
+# WORKDIR /var/www/html/
+# RUN wp core download --allow-root
+# RUN wp config create \
+# 	--dbname=mariadb \
+# 	--dbuser=wordpress \
+# 	--dbpass=cN9Wz6RgF812GUt2GmdcgFIaq3VhxyfAUXcWB9jfnDQ \
+# 	--dbhost=mariadb:3306 \
+# 	--path=/usr/src/wordpress \
+# 	--allow-root
+# RUN wp core install --url=localhost --title=inception --admin_user=admin --admin_password=admin --admin_email=admin@admin.com --allow-root
 
-RUN	chmod +x /var/www/html/wp-config.php
 
-RUN	chmod +x /tmp/run.sh
 
-CMD ["sh", "/tmp/run.sh"]
+
+COPY	./tools/run.sh /tmp/
+RUN		chmod +x /tmp/run.sh
+CMD [ "sh", "/tmp/run.sh" ]
+
+
+
+
+
 
 #Make sure php7.4-fpm is running
 # sudo systemctl status php7.4-fpm
 
 # https://github.com/MansoorMajeed/devops-from-scratch/blob/master/episodes/28-setting-up-wordpress-nginx-php-fpm.md
+# https://developer.wordpress.org/advanced-administration/before-install/howto-install/
 
-#The www.conf file is typically found in /etc/php/7.3/fpm/pool.d/ within the container.
-
-# Starting the Service
-# /usr/sbin/php-fpm7.3 -F

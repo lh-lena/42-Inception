@@ -1,7 +1,8 @@
 FROM debian:buster
 
 # install nginx
-RUN	apt-get update -y  && \
+RUN	apt-get update && \
+	apt-get upgrade -y  && \
 	apt-get install nginx -y && \
 	apt-get install openssl -y 
 
@@ -13,6 +14,7 @@ RUN	apt-get update && \
 # a new folder will the certificate and the key  for a secure connection
 RUN	mkdir -p /etc/nginx/ssl
 
+EXPOSE 443
 # generate a SSL certificate.
 # req - primarily creates and processes certificate requests in PKCS#10 format.
 # -x509 - the keyword to dpecify the type of certificate.
@@ -24,7 +26,7 @@ RUN	mkdir -p /etc/nginx/ssl
 RUN	openssl req -x509 -newkey rsa:4096 -nodes \
 	-keyout /etc/nginx/ssl/inception.key \
 	-out /etc/nginx/ssl/inception.crt \
-	-subj "/C=DE/ST=IDF/L=Berlin/O=42/OU=42Berlin/CN=ohladkov.42Berlin.de/UID=ohladkov"
+	-subj "/C=DE/ST=IDF/L=Berlin/O=42/OU=42Berlin/CN=ohladkov.42.fr/UID=ohladkov"
 
 # create a folder to store the NGINX config files
 RUN	mkdir -p /var/run/nginx
@@ -34,13 +36,9 @@ RUN	rm -f /etc/nginx/nginx.conf
 
 COPY	./conf/nginx.conf /etc/nginx/nginx.conf
 
-#COPY ./tools/ /usr/share/nginx/html/
-
 # gives rights
 RUN	chmod 755 /var/www/html
 RUN	chown -R www-data:www-data /var/www/html
-
-EXPOSE 443
 
 #  keeps NGINX running in the foreground
 CMD ["nginx", "-g", "daemon off;"] 

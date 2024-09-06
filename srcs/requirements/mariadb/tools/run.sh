@@ -1,41 +1,13 @@
 #!/bin/sh
 
-# while true; do
-#     sleep 50
-# done
-
-# wait
-
-# Read secrets
-db_user1_password=$(cat /run/secrets/db_password)
-db_admin_password=$(cat /run/secrets/db_root_password)
-
-# Initialize the database
-mysql_install_db --user=mysql --datadir=/var/lib/mysql
-
-# Start the MariaDB server without networking for security
-mysqld_safe --skip-networking &
-
-# Wait for the server to start
-sleep 5
-
-# Create WordPress database and users
-mysql -e "CREATE DATABASE $DATABASE_NAME;"
-mysql -e "CREATE USER '$WP_USER'@'%' IDENTIFIED BY '$db_user1_password';"
-mysql -e "CREATE USER '$WP_ADMIN_USER'@'%' IDENTIFIED BY '$db_admin_password';"
-mysql -e "GRANT ALL PRIVILEGES ON wordpress.* TO '$WP_USER'@'%';"
-mysql -e "GRANT ALL PRIVILEGES ON wordpress.* TO '$WP_ADMIN_USER'@'%';"
-
-# Create a new database user using the secrets
-# mysql -e "CREATE USER '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';"
-# mysql -e "GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER'@'%' WITH GRANT OPTION;"
-# mysql -e "FLUSH PRIVILEGES;"
-
-# Optionally create a database
-# mysql -e "CREATE DATABASE my_database;"
-
-# Shutdown the server
-mysqladmin shutdown
-
-# Start MariaDB normally
-exec mysqld_safe
+service mysql start;
+. /run/secrets/db_password;
+. /run/secrets/db_root_password;
+sleep 10
+mysql -e "CREATE DATABASE IF NOT EXISTS $db_name;"
+mysql -e "CREATE USER IF NOT EXISTS '$db_user'@'%' IDENTIFIED BY '$db_password';"
+mysql -e "GRANT ALL PRIVILEGES ON *.* TO '$db_user'@'%' WITH GRANT OPTION;"
+mysql -e "ALTER USER 'root'@'%' IDENTIFIED BY $db_root_password"
+mysql -e "FLUSH PRIVILEGES;"
+mysqladmin -u root -p$db_root_password shutdown
+exec mysqld
