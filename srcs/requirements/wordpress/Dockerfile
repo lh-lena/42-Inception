@@ -8,6 +8,9 @@ RUN	apt-get update && \
 	curl \
 	wget
 
+# ARG MARIADB_VERSION=11.6.1
+# ENV MARIADB_VERSION=$MARIADB_VERSION
+
 # wordpress
 RUN		set -eux; \
 	version='6.6.1'; \
@@ -36,10 +39,11 @@ RUN sed -i 's|listen = /run/php/php7.3-fpm.sock|listen = 9000|' /etc/php/7.3/fpm
 # RUN wp core install --url=localhost --title=inception --admin_user=admin --admin_password=admin --admin_email=admin@admin.com --allow-root
 
 
-
-
 COPY	./tools/run.sh /tmp/
 RUN		chmod +x /tmp/run.sh
+
+
+
 CMD [ "sh", "/tmp/run.sh" ]
 
 
