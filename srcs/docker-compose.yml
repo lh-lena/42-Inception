@@ -9,7 +9,7 @@ services:
     container_name: mariadb
     restart: unless-stopped
     volumes:
-      - /home/ohladkov/data/mariadb:/var/lib/mysql
+      - v_mariadb:/var/lib/mysql
       # bind-mount any sql files that should be run while initializing
       # - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
       # - ./init-scripts:/docker-entrypoint-initdb.d  # Mount initialization scripts
@@ -20,8 +20,8 @@ services:
       MARIADB_DATABASE: '${DATABASE_NAME}'
       MARIADB_USER: '${MYSQL_USER}'
       MARIADB_PASSWORD_FILE: db_password
-    # tty: true #docker start -i mariadb
-    # stdin_open: true
+    tty: true #docker start -i mariadb
+    stdin_open: true
     secrets:
       - db_root_password
       - db_password
@@ -40,7 +40,7 @@ services:
     container_name: wordpress
     restart: unless-stopped
     volumes:
-      - /home/ohladkov/data/wordpress:/var/www/html
+      - v_wordpress:/var/www/html
     expose:
       - "9000"
     env_file:
@@ -72,7 +72,7 @@ services:
     env_file:
       - .env
     volumes:
-      - /home/ohladkov/data/wordpress:/var/www/html
+      - v_wordpress:/var/www/html
     networks:
       - inception
   
@@ -102,24 +102,25 @@ networks:
     # network name
     inception:
       # ip address management
+      name: inception
       ipam:
         driver: default
           #        config:
           #- subnet: "192.168.92.0/24"
+  # html-data:
 volumes:
-  html-data:
-#  wordpress:
-#    driver: local
-#    driver_opts:
-#      type: 'none'
-#      o: 'bind'
-#      device: '/home/ohladkov/data/wordpress'
-#  mariadb:
-#    driver: local
-#    driver_opts:
-#      type: 'none' 
-#      o: 'bind'
-#      device: '/home/ohladkov/data/mariadb'
+ v_wordpress:
+   driver: local
+   driver_opts:
+    type: 'none'
+    o: 'bind'
+    device: '/home/ohladkov/data/wordpress'
+ v_mariadb:
+   driver: local
+   driver_opts:
+     type: 'none' 
+     o: 'bind'
+     device: '/home/ohladkov/data/mariadb'
 secrets:
   db_password:
     file: ../secrets/db_password.txt
