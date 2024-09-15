@@ -98,4 +98,15 @@ mysql -u root -p <<EOF
 creat database $HOSTNAME;
 
 
+Configuration mariadb:
+apt-get update && \
+    apt-get install -y mariadb-server && \
+    rm -rf /var/lib/apt/lists/*
+
+- modify bind-address 0.0.0.0 to listen on all network interfaces
+$ /etc/mysql/mariadb.conf.d/50-server.cnf
+- to start the MariaDB service
+$ service mysql start
+- check its status (If MariaDB is running, it should show that it's active.)
+$ service mysql status
 
