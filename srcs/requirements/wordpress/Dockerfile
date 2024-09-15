@@ -22,7 +22,7 @@ RUN		set -eux; \
 
 RUN mkdir -p /run/php
 
-RUN sed -i 's|listen = /run/php/php7.3-fpm.sock|listen = 9000|' /etc/php/7.3/fpm/pool.d/www.conf
+RUN sed -i 's|listen = /run/php/php7.3-fpm.sock|listen = wordpress:9000|' /etc/php/7.3/fpm/pool.d/www.conf
 
 # RUN	wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 # RUN chmod +x wp-cli.phar
@@ -39,16 +39,11 @@ RUN sed -i 's|listen = /run/php/php7.3-fpm.sock|listen = 9000|' /etc/php/7.3/fpm
 # 	--allow-root
 # RUN wp core install --url=localhost --title=inception --admin_user=admin --admin_password=admin --admin_email=admin@admin.com --allow-root
 
-
 COPY	./tools/run.sh /tmp/
 RUN		chmod +x /tmp/run.sh
 
 
 CMD [ "sh", "/tmp/run.sh" ]
-
-
-
-
 
 
 #Make sure php7.4-fpm is running
