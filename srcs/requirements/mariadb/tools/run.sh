@@ -4,7 +4,6 @@ service mysql start
 
 . /run/secrets/db_password
 . /run/secrets/db_root_password
-# echo test3
 mysql -u root -p'test'  << _EOF
 CREATE DATABASE IF NOT EXISTS $db_name;
 CREATE USER IF NOT EXISTS '$db_user'@'%' IDENTIFIED BY '${db_password}';
@@ -14,10 +13,6 @@ FLUSH PRIVILEGES;
 SELECT User, Host FROM mysql.user;
 _EOF
 
-echo "!!!! Database $db_name and user $db_user created successfully."
-
 service mysql stop
-
 sleep 5
-
 exec "$@"

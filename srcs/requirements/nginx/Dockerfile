@@ -32,12 +32,10 @@ RUN	openssl req -x509 -newkey rsa:4096 -nodes \
 # create a folder to store the NGINX config files
 RUN	mkdir -p /var/run/nginx
 
-#??? do we have to remove config files first
 RUN	rm -f /etc/nginx/nginx.conf 
 
 COPY	./conf/nginx.conf /etc/nginx/nginx.conf
 
-# gives rights
 RUN	chmod 755 /var/www/html
 RUN	chown -R www-data:www-data /var/www/html
 

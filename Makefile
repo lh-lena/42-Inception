@@ -9,7 +9,6 @@ DATA_PATH		:= /home/ohladkov/data
 V_WORDPRESS		:= $(DATA_PATH)/wordpress
 V_MARIADB		:= $(DATA_PATH)/mariadb
 SRC				:= $(WORKDIR)/docker-compose.yml
-# DOCKER_PATH=/usr/bin/docker-compose
 
 THIS_FILE := $(realpath $(firstword $(MAKEFILE_LIST)))
 
@@ -23,7 +22,7 @@ services	?= $(service)
 
 ##
 # help
-# Displays a (hopefully) useful help screen to the user
+# Displays a useful help screen to the user
 #
 # NOTE: Keep 'help' as first target in case .DEFAULT_GOAL is not honored
 #
@@ -73,9 +72,9 @@ build: mkdir_volumes ## Builds service images [service|services]
 ##
 # up
 #
-up: mkdir_volumes ## Starts containers (in detached mode) [service|services]
+up: mkdir_volumes ## Starts containers
 	@$(DOCKER_COMPOSE) -f $(SRC) up  $(services)
-#--detach
+
 ##
 # down
 #
@@ -147,13 +146,6 @@ stop: ## Stops containers (without removing them) [service|services]
 #
 restart: stop start ## Stops containers (via 'stop'), and starts them again (via 'start')
 
-# logs:
-# 	cd $(WORKDIR) && $(DOCC) logs mariadb wordpress nginx
-# login-nginx:
-# 		docker compose -f ./srcs/docker-compose.yml exec nginx /bin/bash
-
-# docker system prune -a
-# docker volume prune -a
 
 .PHONY: all help hosts install build up start down rebuild re list images network logs volume
 
