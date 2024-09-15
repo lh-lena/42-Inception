@@ -5,6 +5,9 @@ export DOMAIN	= ${DOMAIN_NAME}
 DOCKER			:= docker
 DOCKER_COMPOSE	:= docker compose
 WORKDIR			:= ./srcs
+DATA_PATH		:= /home/ohladkov/data
+V_WORDPRESS		:= $(DATA_PATH)/wordpress
+V_MARIADB		:= $(DATA_PATH)/mariadb
 SRC				:= $(WORKDIR)/docker-compose.yml
 # DOCKER_PATH=/usr/bin/docker-compose
 
@@ -54,18 +57,25 @@ targets:  ## Lists targets
 services: ## Lists services
 	@$(DOCKER_COMPOSE) -f $(SRC) ps --services
 
+mkdir_volumes:
+	if [ ! -d "$(V_WORDPRESS)" ]; then mkdir -p "$(V_WORDPRESS)"; fi
+	if [ ! -d "$(V_MARIADB)" ]; then mkdir -p "$(V_MARIADB)"; fi
+
+rm_volumes:
+	sudo rm -rf $(DATA_PATH)
+
 ##
 # build
 #
-build: ## Builds service images [service|services]
+build: mkdir_volumes ## Builds service images [service|services]
 	@$(DOCKER_COMPOSE) -f $(SRC) build $(services)
 
 ##
 # up
 #
-up: ## Starts containers (in detached mode) [service|services]
-	@$(DOCKER_COMPOSE) -f $(SRC) up --detach $(services)
-
+up: mkdir_volumes ## Starts containers (in detached mode) [service|services]
+	@$(DOCKER_COMPOSE) -f $(SRC) up  $(services)
+#--detach
 ##
 # down
 #
@@ -80,9 +90,10 @@ rebuild: down build ## Stops containers (via 'down'), and rebuilds service image
 ##
 # clean
 #
-clean: ## Removes containers, images and volumes
+clean: rm_volumes ## Removes containers, images and volumes
 	@$(DOCKER_COMPOSE) -f $(SRC) down --volumes --rmi all;
 	@$(DOCKER) image prune -a -f
+	
 
 ##
 # start

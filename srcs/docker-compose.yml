@@ -1,4 +1,5 @@
 services:
+  
   # Database mariadb
   mariadb:
     build:
@@ -6,11 +7,21 @@ services:
       dockerfile: Dockerfile
     # image: mariadb
     container_name: mariadb
-    restart: always
+    restart: unless-stopped
     volumes:
-      - ./data/mariadb:/var/lib/mysql
+      - v_mariadb:/var/lib/mysql
+      # bind-mount any sql files that should be run while initializing
+      # - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      # - ./init-scripts:/docker-entrypoint-initdb.d  # Mount initialization scripts
     env_file:
       - .env
+    # environment:
+    #   MARIADB_ROOT_PASSWORD_FILE: db_root_password
+    #   MARIADB_DATABASE: '${DATABASE_NAME}'
+    #   MARIADB_USER: '${MYSQL_USER}'
+    #   MARIADB_PASSWORD_FILE: db_password
+    tty: true #docker start -i mariadb
+    stdin_open: true
     secrets:
       - db_root_password
       - db_password
@@ -29,20 +40,22 @@ services:
     container_name: wordpress
     restart: unless-stopped
     volumes:
-      - ./data/wordpress:/var/www/html
+      - v_wordpress:/var/www/html
     expose:
       - "9000"
     env_file:
       - .env
     # environment:
     #   WORDPRESS_DB_HOST: mariadb:3306
+    #   WORDPRESS_DB_NAME: '${DATABASE_NAME}'
+    #   WORDPRESS_DB_USER:  '${MYSQL_USER}'
+    #   WORDPRESS_DB_PASSWORD_FILE: db_password
       
     secrets:
        - db_root_password
        - db_password
     networks:
       - inception
-    
 
   # Nginx Service
   nginx:
@@ -51,7 +64,7 @@ services:
     build: 
       context: requirements/nginx/
       dockerfile: Dockerfile
-    image: nginx
+    # image: nginx
     container_name: nginx
     restart: always
     ports:
@@ -59,7 +72,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./data/wordpress:/var/www/html
+      - v_wordpress:/var/www/html
     networks:
       - inception
   
@@ -91,6 +104,9 @@ networks:
       # ip address management
       name: inception
       driver: bridge
+      # ipam:
+          #        config:
+          #- subnet: "192.168.92.0/24"
   # html-data:
 volumes:
  v_wordpress:
@@ -98,15 +114,13 @@ volumes:
    driver_opts:
     type: 'none'
     o: 'bind'
-    # device: '/home/ohladkov/data/wordpress'
-    device: './data/wordpress'
+    device: '/home/ohladkov/data/wordpress'
  v_mariadb:
    driver: local
    driver_opts:
      type: 'none' 
      o: 'bind'
-    #  device: '/home/ohladkov/data/mariadb'
-     device: './data/mariadb'
+     device: '/home/ohladkov/data/mariadb'
 secrets:
   db_password:
     file: ../secrets/db_password.txt

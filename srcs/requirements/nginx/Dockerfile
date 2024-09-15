@@ -9,7 +9,7 @@ RUN	apt-get update && \
 # accessing the container terminal
 RUN	apt-get update && \
 	apt-get install vim -y && \
-	apt-get install curl -y && \
+	apt-get install curl -y  && \
 	rm -rf /var/lib/apt/lists/*
 
 # a new folder will the certificate and the key  for a secure connection
