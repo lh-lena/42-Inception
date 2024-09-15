@@ -6,7 +6,8 @@ RUN	apt-get update && \
 	php-fpm \
 	php-mysqli \
 	curl \
-	wget
+	wget && \
+	rm -rf /var/lib/apt/lists/*
 
 # ARG MARIADB_VERSION=11.6.1
 # ENV MARIADB_VERSION=$MARIADB_VERSION
@@ -41,7 +42,6 @@ RUN sed -i 's|listen = /run/php/php7.3-fpm.sock|listen = 9000|' /etc/php/7.3/fpm
 
 COPY	./tools/run.sh /tmp/
 RUN		chmod +x /tmp/run.sh
-
 
 
 CMD [ "sh", "/tmp/run.sh" ]

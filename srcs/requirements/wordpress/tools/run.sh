@@ -3,7 +3,7 @@
 cd /var/www/html/
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 chmod +x wp-cli.phar
-sleep 15
+# sleep 10
 . /run/secrets/db_password
 . /run/secrets/db_root_password
 ./wp-cli.phar core download --allow-root
