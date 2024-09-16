@@ -5,9 +5,10 @@ export DOMAIN	= ${DOMAIN_NAME}
 DOCKER			:= docker
 DOCKER_COMPOSE	:= docker compose
 WORKDIR			:= ./srcs
-DATA_PATH		:= /home/ohladkov/data
+DATA_PATH		:= $(WORKDIR)/data
 V_WORDPRESS		:= $(DATA_PATH)/wordpress
 V_MARIADB		:= $(DATA_PATH)/mariadb
+V_REDIS			:= $(DATA_PATH)/redis
 SRC				:= $(WORKDIR)/docker-compose.yml
 
 THIS_FILE := $(realpath $(firstword $(MAKEFILE_LIST)))
@@ -59,9 +60,10 @@ services: ## Lists services
 mkdir_volumes:
 	if [ ! -d "$(V_WORDPRESS)" ]; then mkdir -p "$(V_WORDPRESS)"; fi
 	if [ ! -d "$(V_MARIADB)" ]; then mkdir -p "$(V_MARIADB)"; fi
+	if [ ! -d "$(V_REDIS)" ]; then mkdir -p "$(V_REDIS)"; fi
 
 rm_volumes:
-	sudo rm -rf $(DATA_PATH)
+	rm -rf $(DATA_PATH)
 
 ##
 # build
@@ -89,7 +91,7 @@ rebuild: down build ## Stops containers (via 'down'), and rebuilds service image
 ##
 # clean
 #
-clean: rm_volumes ## Removes containers, images and volumes
+clean: rm_volumes stop ## Removes containers, images and volumes
 	@$(DOCKER_COMPOSE) -f $(SRC) down --volumes --rmi all;
 	@$(DOCKER) image prune -a -f
 	

@@ -5,14 +5,14 @@ services:
     build:
       context: requirements/mariadb
       dockerfile: Dockerfile
-    # image: mariadb
+    # image: mariadb/srcs_mariadb
     container_name: mariadb
     restart: unless-stopped
     volumes:
       - v_mariadb:/var/lib/mysql
     env_file:
       - .env
-    stdin_open: true
+    # stdin_open: true
     secrets:
       - db_root_password
       - db_password
@@ -26,7 +26,7 @@ services:
     build: 
       context: requirements/wordpress
       dockerfile: Dockerfile
-    # image: wordpress
+    # image: wordpress/srcs_wordpress
     container_name: wordpress
     restart: unless-stopped
     volumes:
@@ -48,7 +48,7 @@ services:
     build: 
       context: requirements/nginx/
       dockerfile: Dockerfile
-    # image: nginx
+    # image: nginx/srcs_nginx
     container_name: nginx
     restart: always
     ports:
@@ -70,17 +70,27 @@ services:
   # dokcer exec -it mariadb mysql --user=root --password=(password)
   # 
 
-  # redis:
-  #   image: redis
-  #   container_name: redis
-  #   ports:
-  #     - '6379:6379'
-  #   restart: always
-  #   expose:
-  #     - '6379'
+  redis:
+    depends_on:
+      - wordpress
+    container_name: redis
+    build:
+      context: requirements/bonus/redis/
+      dockerfile: Dockerfile
+    image: redis/srcs-redis
+    restart: always
+    # volumes:
+    #   - redis_data:/var/lib/redis
+    env_file:
+      - .env
+    networks:
+      - inception
       # in wp-config.php file.
 # define('WP_REDIS_HOST', 'redis');
 # define('WP_REDIS_PORT', '6379');
+
+# define( 'WP_REDIS_PATH', '/var/run/redis/redis.sock' );
+# define( 'WP_REDIS_SCHEME', 'unix' );
 
 networks:
     inception:
@@ -88,18 +98,25 @@ networks:
       driver: bridge
 
 volumes:
- v_wordpress:
-   driver: local
-   driver_opts:
-    type: 'none'
-    o: 'bind'
-    device: '/home/ohladkov/data/wordpress'
- v_mariadb:
-   driver: local
-   driver_opts:
-     type: 'none' 
-     o: 'bind'
-     device: '/home/ohladkov/data/mariadb'
+  v_wordpress:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './data/wordpress'
+      # device: '/home/ohladkov/data/wordpress'
+  v_mariadb:
+    driver: local
+    driver_opts:
+      type: 'none' 
+      o: 'bind'
+      device: './data/mariadb'
+  # redis_data:
+  #   driver: local
+  #   driver_opts:
+  #     type: 'none' 
+  #     o: 'bind'
+  #     device: './data/redis'
 secrets:
   db_password:
     file: ../secrets/db_password.txt
