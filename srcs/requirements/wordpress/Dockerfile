@@ -42,7 +42,6 @@ RUN sed -i 's|listen = /run/php/php7.3-fpm.sock|listen = wordpress:9000|' /etc/p
 COPY	./tools/run.sh /tmp/
 RUN		chmod +x /tmp/run.sh
 
-
 CMD [ "sh", "/tmp/run.sh" ]
 
 
