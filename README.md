@@ -1,56 +1,38 @@
 # 42-Inception
 Unlocking the Power of Containerization!
 
-## How to set up your enviroment in your VM
+<details>
+  <summary>Set up your enviroment in your VM</summary>
 
-### Add a User to the different Groups on Debian/Ubuntu-based distribution
+Add a User to the different Groups on Debian/Ubuntu-based distribution
 
 Switch to the root user or another user with sudo privileges:
+	
+	* log in as root:
+		su -
+		sudo adduser login
+		sudo usermod -aG sudo login
+		sudo usermod -aG docker login
+	* or log in with another user with sudo privileges and use `sudo`
+	
+	Log back to `login` user
+	    su login 
+	To verify the addition. Should return `root`
+	    sudo whoami
+	
+	
+Directly Editing the sudoers File
+	
+	1. log in as root:
+	    su -
+	2. This command safely edits the sudoers file:
+	    visudo
+	3. Add a line like this to give <login> sudo privileges:
+	   <login> ALL=(ALL) ALL
+</details>
 
-* log in as root:
-```bash
-    su -
-```
-* or log in with another user with sudo privileges and use `sudo`
-
-
-```bash
-    sudo adduser login
-```
-```bash
-    sudo usermod -aG sudo login
-```
-```bash
-    sudo usermod -aG docker login
-```
-
-Log back to `login` user
-```bash
-    su login 
-```
-To verify the addition. Should return `root`
-```bash
-    sudo whoami
-```
-
-
-## Directly Editing the sudoers File
-
-1. log in as root:
-```bash
-    su -
-```
-2. This command safely edits the sudoers file:
-```bash
-    visudo
-```
-3. Add a line like this to give <login> sudo privileges:
-```
-	<login> ALL=(ALL) ALL
-```
-
-
-## Shared folder
+<details>
+  <summary>Shared folder</summary>
 
 1. Ensure the vboxsf module is loaded:
     sudo modprobe vboxsf
@@ -61,15 +43,19 @@ To verify the addition. Should return `root`
 4. After adding the entry to /etc/fstab, mount the shared folder without rebooting:
     sudo mount -a
 
+Maunt manually:
+
+	sudo mount -t vboxsf <FolderName> /path/to/mount/point
+
+</details>
 
 
-## Install Docker
+<details>
+  <summary>Install Docker</summary>
+
 
 ```bash
-    sudo apt update
-```
-```bash
-    sudo apt install docker.io -y
+    sudo apt update && apt install docker.io -y
 ```
 
 Install Docker Compose -> 
@@ -87,6 +73,11 @@ Dockerfile
     https://docs.docker.com/build/building/packaging/
 ```
 
+</details>
+
+
+<details>
+  <summary>notes</summary>
 
 
 Create a password to the DB
@@ -109,4 +100,4 @@ $ /etc/mysql/mariadb.conf.d/50-server.cnf
 $ service mysql start
 - check its status (If MariaDB is running, it should show that it's active.)
 $ service mysql status
-
+</details>
