@@ -1,18 +1,37 @@
 services:
-  
+
+  # Nginx Service
+  nginx_inception:
+    depends_on:
+      - wordpress_inception
+      - adminer_inception
+    build: 
+      context: requirements/nginx/
+      dockerfile: Dockerfile
+    image: nginx_inception
+    container_name: nginx_inception
+    restart: always
+    ports:
+      - "443:443"
+    env_file:
+      - .env
+    volumes:
+      - v_wordpress:/var/www/html
+    networks:
+      - inception
+
   # Database mariadb
-  mariadb:
+  mariadb_inception:
     build:
       context: requirements/mariadb
       dockerfile: Dockerfile
-    # image: mariadb/srcs_mariadb
-    container_name: mariadb
+    image: mariadb_inception
+    container_name: mariadb_inception
     restart: unless-stopped
     volumes:
       - v_mariadb:/var/lib/mysql
     env_file:
       - .env
-    # stdin_open: true
     secrets:
       - db_root_password
       - db_password
@@ -20,14 +39,14 @@ services:
       - inception
 
   # Wordpress
-  wordpress:
+  wordpress_inception:
     depends_on:
-      - mariadb
+      - mariadb_inception
     build: 
       context: requirements/wordpress
       dockerfile: Dockerfile
-    # image: wordpress/srcs_wordpress
-    container_name: wordpress
+    image: wordpress_inception
+    container_name: wordpress_inception
     restart: unless-stopped
     volumes:
       - v_wordpress:/var/www/html
@@ -38,59 +57,37 @@ services:
     secrets:
        - db_root_password
        - db_password
+       - credentials
     networks:
       - inception
 
-  # Nginx Service
-  nginx:
+  # redis for cache management
+  redis_inception:
     depends_on:
-      - wordpress
-    build: 
-      context: requirements/nginx/
-      dockerfile: Dockerfile
-    # image: nginx/srcs_nginx
-    container_name: nginx
-    restart: always
-    ports:
-      - "443:443"
-    env_file:
-      - .env
-    volumes:
-      - v_wordpress:/var/www/html
-    networks:
-      - inception
-  
-  # GUI for mariadb
-#   adminer:
-#     image: adminer
-#     restart: always
-#     ports:
-#       - 8080:8080
-    # To use the CLI to access mariadb dir:
-  # dokcer exec -it mariadb mysql --user=root --password=(password)
-  # 
-
-  redis:
-    depends_on:
-      - wordpress
-    container_name: redis
+      - wordpress_inception
+    container_name: redis_inception
     build:
       context: requirements/bonus/redis/
       dockerfile: Dockerfile
-    image: redis/srcs-redis
+    image: redis_inception
     restart: always
-    # volumes:
-    #   - redis_data:/var/lib/redis
     env_file:
       - .env
     networks:
       - inception
-      # in wp-config.php file.
-# define('WP_REDIS_HOST', 'redis');
-# define('WP_REDIS_PORT', '6379');
 
-# define( 'WP_REDIS_PATH', '/var/run/redis/redis.sock' );
-# define( 'WP_REDIS_SCHEME', 'unix' );
+  # adminer GUI for mariadb
+  adminer_inception:
+    build:
+      context: requirements/bonus/adminer/
+      dockerfile: Dockerfile
+    container_name: adminer_inception
+    image: adminer_inception
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - inception
 
 networks:
     inception:
@@ -103,27 +100,18 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: './data/wordpress'
-      # device: '/home/ohladkov/data/wordpress'
+      device: '/home/ohladkov/data/wordpress'
   v_mariadb:
     driver: local
     driver_opts:
       type: 'none' 
       o: 'bind'
-      device: './data/mariadb'
-  # redis_data:
-  #   driver: local
-  #   driver_opts:
-  #     type: 'none' 
-  #     o: 'bind'
-  #     device: './data/redis'
+      device: '/home/ohladkov/data/mariadb'
+
 secrets:
   db_password:
     file: ../secrets/db_password.txt
   db_root_password:
     file: ../secrets/db_root_password.txt
-
-
-# https://docs.docker.com/compose/use-secrets/
-# https://www.digitalocean.com/community/tutorials/how-to-install-wordpress-with-docker-compose
-
+  credentials:
+    file: ../secrets/credentials.txt

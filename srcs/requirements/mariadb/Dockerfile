@@ -3,7 +3,8 @@ FROM debian:buster
 RUN apt-get update && \
     apt-get install -y mariadb-server && \
 	rm -rf /var/lib/apt/lists/*
-    
+
+# Expose the default MariaDB port
 EXPOSE 3306
 
 RUN	mkdir -p /var/run/mysqld && \

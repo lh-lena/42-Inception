@@ -19,7 +19,7 @@ services	?= $(service)
 # hosts:
 # sudo sed -i 's|localhost|$(DOMAIN)|g' /etc/hosts
 
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL := up
 
 ##
 # help
@@ -60,7 +60,6 @@ services: ## Lists services
 mkdir_volumes:
 	if [ ! -d "$(V_WORDPRESS)" ]; then mkdir -p "$(V_WORDPRESS)"; fi
 	if [ ! -d "$(V_MARIADB)" ]; then mkdir -p "$(V_MARIADB)"; fi
-	if [ ! -d "$(V_REDIS)" ]; then mkdir -p "$(V_REDIS)"; fi
 
 rm_volumes:
 	rm -rf $(DATA_PATH)
@@ -68,14 +67,14 @@ rm_volumes:
 ##
 # build
 #
-build: mkdir_volumes ## Builds service images [service|services]
-	@$(DOCKER_COMPOSE) -f $(SRC) build $(services)
+build: mkdir_volumes ## Builds service images [service]
+	@$(DOCKER_COMPOSE) -f $(SRC) build $(service)
 
 ##
 # up
 #
 up: mkdir_volumes ## Starts containers
-	@$(DOCKER_COMPOSE) -f $(SRC) up  $(services)
+	@$(DOCKER_COMPOSE) -f $(SRC) up  $(service)
 
 ##
 # down
@@ -83,10 +82,6 @@ up: mkdir_volumes ## Starts containers
 down: ## Removes containers (preserves images and volumes)
 	@$(DOCKER_COMPOSE) -f $(SRC) down
 
-##
-# rebuild
-#
-rebuild: down build ## Stops containers (via 'down'), and rebuilds service images (via 'build')
 
 ##
 # clean
@@ -99,8 +94,8 @@ clean: rm_volumes stop ## Removes containers, images and volumes
 ##
 # start
 #
-start: ## Starts previously-built containers (see 'build') [service|services]
-	@$(DOCKER_COMPOSE) -f $(SRC) start $(services)
+start: ## Starts previously-built containers (see 'build') [service]
+	@$(DOCKER_COMPOSE) -f $(SRC) start $(service)
 
 ##
 # status
@@ -110,8 +105,8 @@ status: ps network volume logs ## see 'ps' 'logs' 'network' 'volume'
 ##
 # ps
 #
-ps: ## Shows status of containers [service|services]
-	@$(DOCKER_COMPOSE) -f $(SRC) ps $(services)
+ps: ## Shows status of containers [service]
+	@$(DOCKER_COMPOSE) -f $(SRC) ps $(service)
 
 ##
 # images
@@ -134,14 +129,14 @@ volume: ## List volumes
 ##
 # logs
 #
-logs:  ## Shows output of running containers (in 'follow' mode) [service|services]
-	@$(DOCKER_COMPOSE) -f $(SRC) logs --follow $(services)
+logs:  ## Shows output of running containers (in 'follow' mode) [service]
+	@$(DOCKER_COMPOSE) -f $(SRC) logs --follow $(service)
 
 ##
 # stop
 #
 stop: ## Stops containers (without removing them) [service|services]
-	@$(DOCKER_COMPOSE) -f $(SRC) stop $(services)
+	@$(DOCKER_COMPOSE) -f $(SRC) stop $(service)
 
 ##
 # restart
@@ -149,7 +144,7 @@ stop: ## Stops containers (without removing them) [service|services]
 restart: stop start ## Stops containers (via 'stop'), and starts them again (via 'start')
 
 
-.PHONY: all help hosts install build up start down rebuild re list images network logs volume
+.PHONY: all help hosts install build up start down list images network logs volume
 
 # https://medium.com/freestoneinfotech/simplifying-docker-compose-operations-using-makefile-26d451456d63
-#     https://gist.github.com/iNamik/73fd1081fe299e3bc897d613179e4aee
+# https://gist.github.com/iNamik/73fd1081fe299e3bc897d613179e4aee

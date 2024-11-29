@@ -1,6 +1,18 @@
 # 42-Inception
 Unlocking the Power of Containerization!
 
+The goal is to build a custom Docker-based multi-service setup orchestrated with Docker Compose, enabling services like NGINX, WordPress, MariaDB, Adminer and Redis to run in isolated containers while maintaining communication with each other.
+
+## Setup and Usage:
+``` bash
+git clone https://github.com/lh-lena/42-Inception.git
+cd 42-Inception
+make up # Build and start the containers:
+make down # Stop containers
+make rm_volumes # Remove volumes 
+```
+
+
 <details>
   <summary>Set up your enviroment in your VM</summary>
 
@@ -77,27 +89,32 @@ Dockerfile
 
 
 <details>
-  <summary>notes</summary>
+  <summary>Notes</summary>
+
+	Create a password to the DB
+	$ openssl rand -base64 32 > db_password.txt
+	$ openssl rand -base64 32 > db_root_password.txt
+
+	PASSWORD=$(tp -dc a-zA-Z0-9 < /dev/urandom | head -c 12)
+	mysql -u root -p <<EOF
+	creat database $HOSTNAME;
 
 
-Create a password to the DB
-$ openssl rand -base64 32 > db_password.txt
-$ openssl rand -base64 32 > db_root_password.txt
+	Configuration mariadb:
+	apt-get update && \
+		apt-get install -y mariadb-server && \
+		rm -rf /var/lib/apt/lists/*
 
-PASSWORD=$(tp -dc a-zA-Z0-9 < /dev/urandom | head -c 12)
-mysql -u root -p <<EOF
-creat database $HOSTNAME;
-
-
-Configuration mariadb:
-apt-get update && \
-    apt-get install -y mariadb-server && \
-    rm -rf /var/lib/apt/lists/*
-
-- modify bind-address 0.0.0.0 to listen on all network interfaces
-$ /etc/mysql/mariadb.conf.d/50-server.cnf
-- to start the MariaDB service
-$ service mysql start
-- check its status (If MariaDB is running, it should show that it's active.)
-$ service mysql status
+	- modify bind-address 0.0.0.0 to listen on all network interfaces
+	$ /etc/mysql/mariadb.conf.d/50-server.cnf
+	- to start the MariaDB service
+	$ service mysql start
+	- check its status (If MariaDB is running, it should show that it's active.)
+	$ service mysql status
 </details>
+
+### References
+
+https://github.com/MansoorMajeed/devops-from-scratch/blob/master/episodes/28-setting-up-wordpress-nginx-php-fpm.md
+https://developer.wordpress.org/advanced-administration/before-install/howto-install/
+https://www.digitalocean.com/community/tutorials/how-to-install-wordpress-with-docker-compose#step-1-defining-the-web-server-configuration
