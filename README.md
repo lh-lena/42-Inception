@@ -1,17 +1,14 @@
 # 42-Inception
 Unlocking the Power of Containerization!
 
-The goal is to build a custom Docker-based multi-service setup orchestrated with Docker Compose, enabling services like NGINX, WordPress, MariaDB, Adminer and Redis to run in isolated containers while maintaining communication with each other.
+The goal is to build a custom Docker-based multi-service setup orchestrated with Docker Compose, enabling services like NGINX, WordPress, MariaDB, Adminer and Redis to run in isolated containers while maintaining communication with each other
 
-## Setup and Usage:
-``` bash
-git clone https://github.com/lh-lena/42-Inception.git
-cd 42-Inception
-make up # Build and start the containers:
-make down # Stop containers
-make rm_volumes # Remove volumes 
-```
 
+## 🎥 Demo
+
+[![Watch the Demo](https://youtu.be/4M23pr9_-nM)](https://youtu.be/4M23pr9_-nM)
+
+Click the image above to watch a video demonstration on YouTube
 
 <details>
   <summary>Set up your enviroment in your VM</summary>
