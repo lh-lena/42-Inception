@@ -10,6 +10,49 @@ The goal is to build a custom Docker-based multi-service setup orchestrated with
 
 Click the image above to watch a video demonstration on YouTube
 
+----
+### 📂 Folder Structure:
+```
+.
+├── LICENSE
+├── Makefile
+├── README.md
+├── secrets
+│   ├── credentials.txt
+│   ├── db_password.txt
+│   └── db_root_password.txt
+└── srcs
+    ├── docker-compose.yml
+    └── requirements
+        ├── bonus
+        │   ├── adminer
+        │   │   └── Dockerfile
+        │   ├── ftp
+        │   │   └── Dockerfile
+        │   └── redis
+        │       ├── Dockerfile
+        │       ├── conf
+        │       │   └── redis.conf
+        │       └── tools
+        ├── mariadb
+        │   ├── Dockerfile
+        │   ├── conf
+        │   │   └── 50-server.cnf
+        │   └── tools
+        │       └── run.sh
+        ├── nginx
+        │   ├── Dockerfile
+        │   └── conf
+        │       └── nginx.conf
+        └── wordpress
+            ├── Dockerfile
+            ├── conf
+            │   └── www.conf
+            └── tools
+                └── run.sh
+```
+----
+
 <details>
   <summary>Set up your enviroment in your VM</summary>
 
